@@ -6,6 +6,7 @@ import '../../data/models/bible_book.dart';
 import '../../data/models/verse.dart';
 import '../../viewmodels/reader_viewmodel.dart';
 import '../../viewmodels/word_detail_viewmodel.dart';
+import '../widgets/app_navigation_bar.dart';
 import '../widgets/ui.dart';
 import '../widgets/verse_text.dart';
 import '../word_detail/word_detail_sheet.dart';
@@ -134,30 +135,39 @@ class _ChapterScreenState extends ConsumerState<ChapterScreen> {
                 ),
               ),
       ),
-      bottomNavigationBar: SafeArea(
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border(top: BorderSide(color: p.border)),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          child: Row(
-            children: [
-              TextButton.icon(
-                onPressed: _chapter > 1 ? () => _goTo(_chapter - 1) : null,
-                icon: const Icon(Icons.chevron_left),
-                label: const Text('이전 장'),
+      // 이전/다음 장 버튼 아래에 앱 하단 탭을 둔다 (아래쪽 안전 영역은 탭 바가 맡는다).
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SafeArea(
+            top: false,
+            bottom: false,
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border(top: BorderSide(color: p.border)),
               ),
-              const Spacer(),
-              TextButton.icon(
-                onPressed: _chapter < book.chapterCount
-                    ? () => _goTo(_chapter + 1)
-                    : null,
-                icon: const Icon(Icons.chevron_right),
-                label: const Text('다음 장'),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: Row(
+                children: [
+                  TextButton.icon(
+                    onPressed: _chapter > 1 ? () => _goTo(_chapter - 1) : null,
+                    icon: const Icon(Icons.chevron_left),
+                    label: const Text('이전 장'),
+                  ),
+                  const Spacer(),
+                  TextButton.icon(
+                    onPressed: _chapter < book.chapterCount
+                        ? () => _goTo(_chapter + 1)
+                        : null,
+                    icon: const Icon(Icons.chevron_right),
+                    label: const Text('다음 장'),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+          const AppNavigationBar(),
+        ],
       ),
     );
   }
