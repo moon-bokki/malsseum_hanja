@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/config/app_config.dart';
@@ -44,5 +45,6 @@ final wordbookRepositoryProvider = Provider<WordbookRepository>(
 );
 
 final pushNotificationServiceProvider = Provider<PushNotificationService?>(
-  (ref) => AppConfig.useFirebase ? PushNotificationService() : null,
+  // 웹 푸시는 아직 지원하지 않는다 (main.dart 참고).
+  (ref) => AppConfig.useFirebase && !kIsWeb ? PushNotificationService() : null,
 );
