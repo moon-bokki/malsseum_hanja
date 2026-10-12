@@ -8,7 +8,8 @@ abstract class DictionaryRepository {
   Future<DictionaryEntry> lookup(HanjaWord word);
 }
 
-/// Open API 로 뜻풀이를 가져오고, 키가 없거나 실패하면 내장 뜻풀이로 대체한다.
+/// 내장 뜻풀이가 이미 표준국어대사전 것이면 그대로 쓴다 (tool/fetch_stdict.dart).
+/// 아니면 Open API 로 뜻풀이를 가져오고, 키가 없거나 실패하면 내장 뜻풀이로 대체한다.
 class DictionaryRepositoryImpl implements DictionaryRepository {
   DictionaryRepositoryImpl(this._api);
 
@@ -22,9 +23,11 @@ class DictionaryRepositoryImpl implements DictionaryRepository {
 
     final fallback = DictionaryEntry(
       word: word.korean,
-      definitions: [word.meaning],
+      pos: word.pos,
+      definitions: word.definitions,
+      fromApi: word.fromStdict,
     );
-    if (!_api.hasKey) return fallback;
+    if (word.fromStdict || !_api.hasKey) return fallback;
 
     try {
       final items = (await _api.search(word.korean))

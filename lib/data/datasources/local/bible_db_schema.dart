@@ -6,12 +6,13 @@ import '../../models/verse.dart';
 
 /// 앱에 내장하는 bible.db 의 버전. 데이터를 다시 만들면 올린다.
 /// (기기에 복사해 둔 이전 버전 DB 대신 새 파일을 쓰게 된다.)
-const bibleDataVersion = 3;
+const bibleDataVersion = 4;
 
 /// bible.db 스키마. tool/build_bible_db.dart 와 테스트가 함께 쓴다.
 ///
 /// - verses:       본문 (개역한글). book 은 정경 순서 1~66.
 /// - words:        한자어 사전. 같은 단어는 한 번만 저장한다.
+///                 stdict = 1 이면 meaning(줄바꿈으로 나뉜 뜻풀이)·pos 가 표준국어대사전 것이다.
 /// - verse_words:  구절 ↔ 한자어 연결. reviewed = 0 이면 앱에 보이지 않는다.
 /// - daily_verses: 오늘의 말씀 목록 (Firestore verses 의 order 와 같은 순서).
 const _schema = '''
@@ -29,6 +30,8 @@ CREATE TABLE words (
   korean  TEXT NOT NULL,
   hanja   TEXT NOT NULL,
   meaning TEXT NOT NULL,
+  pos     TEXT,
+  stdict  INTEGER NOT NULL DEFAULT 0,
   UNIQUE (korean, hanja)
 );
 
@@ -66,7 +69,7 @@ void buildBibleDb(
     'INSERT INTO verses (id, book, chapter, verse, text) VALUES (?, ?, ?, ?, ?)',
   );
   final insertWord = db.prepare(
-    'INSERT INTO words (korean, hanja, meaning) VALUES (?, ?, ?) '
+    'INSERT INTO words (korean, hanja, meaning, pos, stdict) VALUES (?, ?, ?, ?, ?) '
     'ON CONFLICT (korean, hanja) DO NOTHING',
   );
   final findWord = db.prepare(
@@ -78,7 +81,13 @@ void buildBibleDb(
   );
 
   void link(String verseId, HanjaWord w, int position, {required bool ok}) {
-    insertWord.execute([w.korean, w.hanja, w.meaning]);
+    insertWord.execute([
+      w.korean,
+      w.hanja,
+      w.meaning,
+      w.pos,
+      w.fromStdict ? 1 : 0,
+    ]);
     final wordId = findWord.select([w.korean, w.hanja]).first['id'];
     linkWord.execute([verseId, wordId, position, ok ? 1 : 0]);
   }

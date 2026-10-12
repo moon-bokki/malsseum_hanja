@@ -8,6 +8,8 @@
 //   tool/data/verses.json        손으로 검토한 구절별 한자어 (오늘의 말씀 목록도 이 순서)
 //   tool/data/hanja_words.json   한자어 사전. 본문에서 찾아 모든 구절에 자동으로 붙인다.
 //   tool/data/hanja_exclude.json (선택) 잘못 붙는 단어 빼기: {"구절id": ["한글", …]}
+//   tool/data/stdict_meanings.json (선택) 표준국어대사전 뜻풀이 (tool/fetch_stdict.dart 로 받는다).
+//                                있으면 상태가 '일치'인 단어의 뜻풀이·품사를 사전 것으로 바꾼다.
 //
 // 출력
 //   assets/data/bible.db         앱에 들어가는 DB
@@ -30,6 +32,7 @@ const _annotatedPath = 'tool/data/verses.json';
 const _fullTextPath = 'tool/data/bible_text.tsv';
 const _dictionaryPath = 'tool/data/hanja_words.json';
 const _excludePath = 'tool/data/hanja_exclude.json';
+const _stdictPath = 'tool/data/stdict_meanings.json';
 const _reportPath = 'tool/data/hanja_report.tsv';
 const _reviewPath = 'tool/data/hanja_review.tsv';
 const _outPath = 'assets/data/bible.db';
@@ -53,7 +56,13 @@ void main() {
         )
       : const <String, Set<String>>{};
 
-  final links = linkHanjaWords(base, dictionary, exclude: exclude);
+  final stdict = File(_stdictPath).existsSync()
+      ? _readStdict(_readJson(_stdictPath) as Map<String, dynamic>)
+      : const <String, HanjaWord>{};
+  final links = _withStdict(
+    linkHanjaWords(base, dictionary, exclude: exclude),
+    stdict,
+  );
 
   final out = File(_outPath);
   if (out.existsSync()) out.deleteSync();
@@ -70,17 +79,54 @@ void main() {
   _writeReports(links, dictionary);
 
   final withWords = links.verses.where((v) => v.words.isNotEmpty).length;
-  final words = {for (final v in links.verses) ...v.words}.length;
+  final shownWords = {for (final v in links.verses) ...v.words};
+  final words = shownWords.length;
+  final fromStdict = shownWords.where((w) => w.fromStdict).length;
   stdout.writeln(
     '$_outPath 생성 (${out.lengthSync()} bytes)\n'
     '  구절 ${links.verses.length}개 중 한자어가 표시되는 구절 $withWords개 '
     '(${(withWords * 100 / links.verses.length).toStringAsFixed(1)}%)\n'
     '  표시되는 한자어 $words개, 검토 필요한 구절 ${links.unreviewed.length}개\n'
+    '  표준국어대사전 뜻풀이 $fromStdict개 / $words개\n'
     '  보고서: $_reportPath, $_reviewPath',
   );
 }
 
 Object? _readJson(String path) => jsonDecode(File(path).readAsStringSync());
+
+/// stdict_meanings.json 에서 '일치'인 항목만: "한글/한자" → 사전 뜻풀이를 넣은 한자어.
+Map<String, HanjaWord> _readStdict(Map<String, dynamic> json) => {
+  for (final MapEntry(:key, :value) in json.entries)
+    if (value case {'status': '일치', 'definitions': final List definitions}
+        when definitions.isNotEmpty)
+      key: HanjaWord(
+        korean: key.split('/').first,
+        hanja: key.split('/').last,
+        // 뜻이 여럿이면 줄바꿈으로 나눠 한 칸에 넣는다 (HanjaWord.definitions).
+        meaning: definitions.cast<String>().join('\n'),
+        pos: value['pos'] as String?,
+        fromStdict: true,
+      ),
+};
+
+/// 구절에 붙은 한자어의 뜻풀이를 표준국어대사전 것으로 바꾼다.
+HanjaLinks _withStdict(HanjaLinks links, Map<String, HanjaWord> stdict) {
+  if (stdict.isEmpty) return links;
+  List<HanjaWord> replace(List<HanjaWord> words) => [
+    for (final w in words) stdict['${w.korean}/${w.hanja}'] ?? w,
+  ];
+  return HanjaLinks([
+    for (final v in links.verses)
+      Verse(
+        id: v.id,
+        book: v.book,
+        chapter: v.chapter,
+        verse: v.verse,
+        text: v.text,
+        words: replace(v.words),
+      ),
+  ], links.unreviewed.map((id, words) => MapEntry(id, replace(words))));
+}
 
 /// 단어별 연결 수 보고서와 검토 목록을 쓴다.
 void _writeReports(HanjaLinks links, List<HanjaDictEntry> dictionary) {
