@@ -22,6 +22,8 @@ void main() {
 
     expect(find.text('오늘의 말씀'), findsOneWidget);
     expect(find.byType(NavigationBar), findsOneWidget);
+    // 맨 위에는 로고 이미지(assets/images/logo02.png)가 보인다.
+    expect(find.bySemanticsLabel('말씀한자'), findsOneWidget);
   });
 
   test('findWordMatches 는 본문 속 한자어 위치를 순서대로 찾는다', () {

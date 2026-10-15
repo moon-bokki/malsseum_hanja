@@ -61,30 +61,32 @@ class _Header extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final p = context.palette;
     final now = DateTime.now();
+    // 로고(심볼 + 워드마크 + 슬로건)는 글자색이 검정이라, 다크 테마에서는 밝은 바탕에 얹는다.
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final logo = Image.asset(
+      'assets/images/logo02.png',
+      height: 44,
+      semanticLabel: '말씀한자',
+    );
     return Row(
       children: [
-        Container(
-          width: 36,
-          height: 36,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: p.accent,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Text(
-            '言',
-            style: AppText.hanja(context, 20).copyWith(color: p.onAccent),
-          ),
-        ),
-        const SizedBox(width: 10),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                '말씀한자',
-                style: AppText.ui(context, 18, weight: FontWeight.w700),
-              ),
+              dark
+                  ? DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF6F5FA),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: logo,
+                      ),
+                    )
+                  : logo,
+              const SizedBox(height: 4),
               Text(
                 '${now.month}월 ${now.day}일 ${_weekdays[now.weekday - 1]}요일',
                 style: AppText.ui(context, 12, color: p.muted),

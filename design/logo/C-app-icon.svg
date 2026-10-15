@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240">
+  <title>말씀한자 C — 앱 아이콘</title>
+  <rect width="240" height="240" rx="56" fill="#FBF3DC"/>
+  <path d="M116 64 C 94 52, 62 50, 36 56 L 36 174 C 62 168, 94 170, 116 182 Z" fill="#5B4B8A"/>
+  <path d="M124 64 C 146 52, 178 50, 204 56 L 204 174 C 178 168, 146 170, 124 182 Z" fill="#5B4B8A"/>
+  <text x="76" y="146" text-anchor="middle" font-family="Noto Serif KR" font-weight="900" font-size="66" fill="#FFFFFF">言</text>
+  <text x="164" y="146" text-anchor="middle" font-family="Noto Serif KR" font-weight="900" font-size="66" fill="#FFFFFF">字</text>
+  <path d="M112 178 L 112 206 L 120 198 L 128 206 L 128 178 Z" fill="#8A6408"/>
+</svg>
