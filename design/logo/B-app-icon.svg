@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240">
+  <title>말씀한자 B — 앱 아이콘, 전서풍 획</title>
+  <rect width="240" height="240" rx="56" fill="#3F3266"/>
+  <rect x="40" y="40" width="160" height="160" rx="10" fill="none" stroke="#E2B85A" stroke-width="8"/>
+  <g fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+    <path transform="translate(58 60) scale(0.7)" d="M8 4 H40 Q44 4 44 8 V32 Q44 36 40 36 H8 Q4 36 4 32 V8 Q4 4 8 4 Z M60 2 V42 M60 20 H76 M6 48 H70 Q76 48 76 54 V57 Q76 63 70 63 H12 Q6 63 6 69 V72 Q6 78 12 78 H76"/>
+    <path transform="translate(58 126) scale(0.7)" d="M5 30 L21 6 L37 30 M43 30 L59 6 L75 30 M2 42 H78 M20 52 H60 Q66 52 66 58 V72 Q66 78 60 78 H20 Q14 78 14 72 V58 Q14 52 20 52 Z"/>
+  </g>
+  <g fill="none" stroke="#E2B85A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+    <path transform="translate(128 60) scale(0.7)" d="M13 2 Q7 21 13 40 Q19 59 13 78 M3 40 V54 M3 62 V76 M23 4 V18 M23 26 V40 M34 8 H78 M46 2 V18 H66 M66 2 V18 M44 28 H68 Q72 28 72 32 V42 Q72 46 68 46 H44 Q40 46 40 42 V32 Q40 28 44 28 Z M34 58 H78 M56 46 V64 M56 64 Q50 72 38 78 M56 64 Q62 72 74 78"/>
+    <path transform="translate(128 126) scale(0.7)" d="M40 2 V10 M6 28 V18 Q6 10 14 10 H66 Q74 10 74 18 V28 M40 26 A8 8 0 1 1 40 42 A8 8 0 1 1 40 26 Z M14 44 Q22 54 40 54 Q58 54 66 44 M40 42 V72 Q40 78 33 78"/>
+  </g>
+</svg>

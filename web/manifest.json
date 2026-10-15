@@ -1,11 +1,11 @@
 {
-    "name": "malsseum_hanja",
-    "short_name": "malsseum_hanja",
+    "name": "말씀한자",
+    "short_name": "말씀한자",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#F6F5FA",
+    "theme_color": "#F6F5FA",
+    "description": "매일 한 구절, 한자로 깊이 읽는 성경",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

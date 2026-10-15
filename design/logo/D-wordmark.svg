@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="170" viewBox="0 0 520 170">
+  <title>말씀한자 D — 점선 밑줄 워드마크</title>
+  <text x="0" y="140" font-family="Noto Sans KR" font-weight="900" font-size="96" letter-spacing="-2" fill="#3F3266">말씀</text>
+  <rect x="214" y="44" width="216" height="112" rx="10" fill="#FBF3DC"/>
+  <text x="322" y="34" text-anchor="middle" font-family="Noto Serif KR" font-weight="700" font-size="26" letter-spacing="14" fill="#8A6408">漢字</text>
+  <text x="222" y="140" font-family="Noto Sans KR" font-weight="900" font-size="96" letter-spacing="-2" fill="#8A6408">한자</text>
+  <line x1="220" y1="160" x2="426" y2="160" stroke="#8A6408" stroke-width="5" stroke-linecap="round" stroke-dasharray="1 10"/>
+</svg>

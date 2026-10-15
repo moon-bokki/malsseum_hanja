@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
   <!--
     If you are serving your web app in a path other than the root, change the
@@ -18,21 +18,65 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="매일 한 구절, 한자로 깊이 읽는 성경">
+  <meta name="theme-color" content="#F6F5FA">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="malsseum_hanja">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="말씀한자">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>malsseum_hanja</title>
+  <title>말씀한자</title>
   <link rel="manifest" href="manifest.json">
+
+  <!-- 시작 화면: Flutter 엔진을 내려받는 동안 보인다 (lib/views/splash/splash_screen.dart 와 같은 모양). -->
+  <style>
+    html, body { margin: 0; height: 100%; background: #F6F5FA; }
+    #splash {
+      position: fixed; inset: 0; z-index: 9999;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px;
+      background: #F6F5FA;
+      transition: opacity 0.35s ease;
+    }
+    #splash.hidden { opacity: 0; pointer-events: none; }
+    #splash img { width: min(72vw, 320px); height: auto; }
+    #splash .bar {
+      width: 120px; height: 4px; border-radius: 2px; overflow: hidden;
+      background: #ECE8F6;
+    }
+    #splash .bar::after {
+      content: ""; display: block; width: 40%; height: 100%; border-radius: 2px;
+      background: #8A6408;
+      animation: splash-slide 1.2s ease-in-out infinite;
+    }
+    @keyframes splash-slide {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(250%); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #splash .bar::after { animation: none; width: 100%; }
+    }
+  </style>
 </head>
 <body>
+  <div id="splash" role="status" aria-label="말씀한자를 불러오는 중">
+    <img src="splash/logo02.png" alt="말씀한자">
+    <div class="bar"></div>
+  </div>
+  <script>
+    // Flutter 가 첫 화면을 그리면(앱 스플래시가 같은 모양으로 이어 받는다) 시작 화면을 걷어 낸다.
+    window.addEventListener('flutter-first-frame', function () {
+      var splash = document.getElementById('splash');
+      if (!splash) return;
+      splash.classList.add('hidden');
+      setTimeout(function () { splash.remove(); }, 400);
+    });
+  </script>
   <!--
     You can customize the "flutter_bootstrap.js" script.
     This is useful to provide a custom configuration to the Flutter loader

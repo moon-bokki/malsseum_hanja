@@ -134,4 +134,28 @@ void main() {
       2,
     );
   });
+
+  testWidgets('단어 상세 창의 쓰기 연습 버튼으로 바로 연습할 수 있다', (tester) async {
+    await openBibleTab(tester);
+
+    await tester.enterText(find.byType(SearchBar).first, '요 3:16');
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('3:16'));
+    await tester.pumpAndSettle();
+
+    // 구절의 한자어 카드를 누르면 상세 창이 열린다.
+    await tester.tap(find.text('獨生子'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(OutlinedButton, '쓰기 연습'));
+    await tester.pumpAndSettle();
+    expect(find.byType(BottomSheet), findsNothing); // 상세 창은 닫혔다
+    expect(find.text('쓰기 연습'), findsOneWidget); // 패널 제목
+    expect(find.textContaining('1 / 3', findRichText: true), findsOneWidget);
+
+    // 패널의 뜻 보기로 연 상세 창에는 쓰기 연습 버튼이 없다.
+    await tester.tap(find.text('뜻 보기'));
+    await tester.pumpAndSettle();
+    expect(find.byType(BottomSheet), findsOneWidget);
+    expect(find.widgetWithText(OutlinedButton, '쓰기 연습'), findsNothing);
+  });
 }

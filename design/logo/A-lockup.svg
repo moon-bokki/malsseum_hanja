@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="240" viewBox="0 0 720 240">
+  <title>말씀한자 A — 심볼 + 워드마크</title>
+  <rect width="240" height="240" rx="56" fill="#5B4B8A"/>
+  <text x="120" y="172" text-anchor="middle" font-family="Noto Serif KR" font-weight="900" font-size="150" fill="#FFFFFF">言</text>
+  <circle cx="186" cy="54" r="13" fill="#E2B85A"/>
+  <text x="288" y="128" font-family="Noto Serif KR" font-weight="700" font-size="88" fill="#1F1B2D">말씀한자</text>
+  <text x="292" y="176" font-family="Noto Sans KR" font-weight="500" font-size="18" letter-spacing="7" fill="#5E5873">MALSSEUM HANJA</text>
+</svg>

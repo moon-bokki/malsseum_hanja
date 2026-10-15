@@ -9,17 +9,25 @@ import '../../viewmodels/reader_viewmodel.dart';
 import '../../viewmodels/word_detail_viewmodel.dart';
 import '../reader/reader_screen.dart' show openChapter;
 import '../widgets/ui.dart';
+import '../wordbook/writing_practice_panel.dart' show showWritingPractice;
 
+/// [showWritingButton] 이 false 이면 '쓰기 연습' 버튼을 숨긴다
+/// (쓰기 연습 패널의 '뜻 보기' 에서 열 때 패널이 겹쳐 열리지 않게).
 Future<void> showWordDetailSheet(
   BuildContext context, {
   required HanjaWord word,
   required String verseRef,
+  bool showWritingButton = true,
 }) {
   return showModalBottomSheet(
     context: context,
     showDragHandle: true,
     isScrollControlled: true,
-    builder: (_) => WordDetailSheet(word: word, verseRef: verseRef),
+    builder: (_) => WordDetailSheet(
+      word: word,
+      verseRef: verseRef,
+      showWritingButton: showWritingButton,
+    ),
   );
 }
 
@@ -28,10 +36,12 @@ class WordDetailSheet extends ConsumerWidget {
     super.key,
     required this.word,
     required this.verseRef,
+    this.showWritingButton = true,
   });
 
   final HanjaWord word;
   final String verseRef;
+  final bool showWritingButton;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -90,6 +100,23 @@ class WordDetailSheet extends ConsumerWidget {
                     ],
                   ],
                 ),
+                // 단어장에 저장하지 않아도 바로 쓰기 연습을 할 수 있다.
+                if (showWritingButton) ...[
+                  const SizedBox(height: 12),
+                  OutlinedButton.icon(
+                    onPressed: () {
+                      final navigator = Navigator.of(context);
+                      navigator.pop();
+                      showWritingPractice(
+                        navigator.context,
+                        word: word,
+                        verseRef: verseRef,
+                      );
+                    },
+                    icon: const Icon(Icons.draw_outlined, size: 18),
+                    label: const Text('쓰기 연습'),
+                  ),
+                ],
                 const SizedBox(height: 20),
                 Row(
                   children: [

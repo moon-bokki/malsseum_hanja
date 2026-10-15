@@ -120,6 +120,7 @@ class _WritingPracticePanelState extends ConsumerState<WritingPracticePanel> {
                             context,
                             word: word,
                             verseRef: widget.verseRef,
+                            showWritingButton: false,
                           ),
                           child: const Text('뜻 보기'),
                         ),
