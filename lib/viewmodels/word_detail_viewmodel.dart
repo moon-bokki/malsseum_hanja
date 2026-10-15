@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/models/dictionary_entry.dart';
 import '../data/models/hanja_char.dart';
+import '../data/models/hanja_origin.dart';
 import '../data/models/hanja_word.dart';
 import '../providers.dart';
 
@@ -63,4 +64,9 @@ final wordDetailViewModelProvider = AsyncNotifierProvider.autoDispose
 /// 한자어의 글자별 훈음 (恩惠 → 은혜 은, 은혜 혜).
 final hanjaCharsProvider = FutureProvider.family<List<HanjaChar>, HanjaWord>(
   (ref, word) => ref.watch(bibleRepositoryProvider).getHanjaChars(word),
+);
+
+/// 한자 한 글자의 구성원리 (渡 → 회의문자, 풀이, 옛 글자 모양).
+final hanjaOriginProvider = FutureProvider.family<HanjaOrigin?, String>(
+  (ref, char) => ref.watch(bibleRepositoryProvider).getHanjaOrigin(char),
 );

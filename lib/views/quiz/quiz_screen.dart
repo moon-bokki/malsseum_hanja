@@ -259,7 +259,7 @@ class _Explanation extends ConsumerWidget {
     final parts = [
       '${word.korean}(${word.hanja})',
       if (chars.isNotEmpty) chars.map((c) => c.hunEum).join(' + '),
-      if (word.meaning.isNotEmpty) word.meaning,
+      if (word.shortMeaning.isNotEmpty) word.shortMeaning,
     ];
     return SurfaceCard(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),

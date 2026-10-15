@@ -1,0 +1,19 @@
+{
+  // F5 로 실행할 때 쓰는 설정. 실행/디버그 패널(Ctrl+Shift+D) 위쪽 목록에서 고른다.
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "말씀한자 (Firebase)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": ["--dart-define=USE_FIREBASE=true"]
+    },
+    {
+      "name": "말씀한자 (Firebase 없이)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart"
+    }
+  ]
+}

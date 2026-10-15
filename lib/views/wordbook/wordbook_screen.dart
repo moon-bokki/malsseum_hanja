@@ -102,6 +102,16 @@ class WordbookScreen extends ConsumerWidget {
                           textAlign: TextAlign.center,
                           style: AppText.ui(context, 12, color: p.muted),
                         ),
+                        // 표준국어대사전 뜻풀이는 출처 표시가 필요하다 (CC BY-SA 2.0 KR).
+                        if (shown.any((s) => s.word.fromStdict))
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4),
+                            child: Text(
+                              '뜻풀이 출처: 국립국어원 표준국어대사전',
+                              textAlign: TextAlign.center,
+                              style: AppText.ui(context, 12, color: p.muted),
+                            ),
+                          ),
                       ],
                     );
                   },
@@ -161,6 +171,13 @@ class _WordRow extends ConsumerWidget {
                     s.word.korean,
                     style: AppText.ui(context, 16, weight: FontWeight.w700),
                   ),
+                  if (s.word.shortMeaning.isNotEmpty)
+                    Text(
+                      s.word.shortMeaning,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppText.ui(context, 13),
+                    ),
                   Text(
                     s.verseRef,
                     style: AppText.ui(context, 12, color: p.muted),

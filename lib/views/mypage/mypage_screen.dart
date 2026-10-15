@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -109,7 +110,11 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                       style: AppText.ui(context, 15, weight: FontWeight.w500),
                     ),
                     subtitle: Text(
-                      push == null ? 'Firebase 설정 후 사용할 수 있습니다' : '매일 아침 7시',
+                      push != null
+                          ? '매일 아침 7시'
+                          : kIsWeb
+                          ? '모바일 앱에서 사용할 수 있습니다'
+                          : 'Firebase 설정 후 사용할 수 있습니다',
                       style: AppText.ui(context, 12, color: p.muted),
                     ),
                     value: _dailyVerse,

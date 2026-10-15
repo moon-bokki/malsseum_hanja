@@ -3,11 +3,12 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 
 import '../core/config/app_config.dart';
+import '../firebase_options.dart';
 
 /// 앱이 종료/백그라운드 상태일 때 수신한 메시지 처리 (시스템 알림은 OS 가 표시).
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 }
 
 /// FCM 푸시 알림. 오늘의 말씀은 Cloud Functions 가 [AppConfig.dailyVerseTopic]

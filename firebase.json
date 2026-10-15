@@ -1,0 +1,26 @@
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "bible-hanja",
+          "appId": "1:338654862983:android:aea6fc109b69623cf1a222",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "bible-hanja",
+          "configurations": {
+            "android": "1:338654862983:android:aea6fc109b69623cf1a222",
+            "ios": "1:338654862983:ios:3193099c2385476bf1a222",
+            "web": "1:338654862983:web:5a74998d8b398f74f1a222"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "338654862983",
+    "project_id": "bible-hanja",
+    "storage_bucket": "bible-hanja.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:338654862983:android:aea6fc109b69623cf1a222",
+        "android_client_info": {
+          "package_name": "com.malsseum.malsseum_hanja"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKCnhCc6QFhje30H5DN5Gyte4Go9pmnek"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

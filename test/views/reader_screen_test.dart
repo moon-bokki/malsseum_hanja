@@ -107,4 +107,31 @@ void main() {
     expect(find.byType(Table), findsNothing);
     expect(find.text('신약 · 27권'), findsOneWidget);
   });
+
+  testWidgets('장 화면에도 하단 탭이 있고, 탭을 누르면 장을 닫고 그 탭으로 간다', (tester) async {
+    await openBibleTab(tester);
+
+    await tester.tap(find.widgetWithText(ChoiceChip, '신약'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(FilterChip, '마태복음'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('4'));
+    await tester.pumpAndSettle();
+    expect(find.text('마태복음 4장'), findsOneWidget);
+    expect(find.byType(NavigationBar), findsOneWidget);
+    expect(find.text('다음 장'), findsOneWidget);
+
+    await tester.tap(
+      find.descendant(
+        of: find.byType(NavigationBar),
+        matching: find.text('단어장'),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('마태복음 4장'), findsNothing);
+    expect(
+      tester.widget<NavigationBar>(find.byType(NavigationBar)).selectedIndex,
+      2,
+    );
+  });
 }

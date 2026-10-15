@@ -5,6 +5,7 @@ import '../datasources/local/local_bible_datasource.dart';
 import '../models/bible_book.dart';
 import '../models/bible_query.dart';
 import '../models/hanja_char.dart';
+import '../models/hanja_origin.dart';
 import '../models/hanja_word.dart';
 import '../models/verse.dart';
 
@@ -31,6 +32,9 @@ abstract class BibleRepository {
   Future<Verse> getTodayVerse(DateTime date);
 
   Future<List<HanjaChar>> getHanjaChars(HanjaWord word);
+
+  /// 한자 한 글자의 구성원리. 없으면 null.
+  Future<HanjaOrigin?> getHanjaOrigin(String char);
 
   /// 검토를 마친 한자어 전체.
   Future<List<HanjaWord>> getAllWords();
@@ -121,10 +125,14 @@ class SqliteBibleRepository implements BibleRepository {
   }
 
   @override
+  Future<HanjaOrigin?> getHanjaOrigin(String char) async =>
+      (await _local.loadHanjaOrigins())[char];
+
+  @override
   Future<List<HanjaWord>> getAllWords() async {
     final rows = await _db
         .customSelect(
-          'SELECT DISTINCT w.korean, w.hanja, w.meaning '
+          'SELECT DISTINCT w.korean, w.hanja, w.meaning, w.pos, w.stdict '
           'FROM words w JOIN verse_words vw ON vw.word_id = w.id '
           'WHERE vw.reviewed = 1 ORDER BY w.id',
         )
@@ -204,7 +212,7 @@ class SqliteBibleRepository implements BibleRepository {
   Future<Map<String, List<HanjaWord>>> _wordsFor(List<String> verseIds) async {
     final rows = await _db
         .customSelect(
-          'SELECT vw.verse_id, w.korean, w.hanja, w.meaning '
+          'SELECT vw.verse_id, w.korean, w.hanja, w.meaning, w.pos, w.stdict '
           'FROM verse_words vw JOIN words w ON w.id = vw.word_id '
           'WHERE vw.reviewed = 1 AND vw.verse_id IN '
           '(${verseIds.map((_) => '?').join(',')}) '
@@ -223,6 +231,8 @@ class SqliteBibleRepository implements BibleRepository {
     korean: r.read<String>('korean'),
     hanja: r.read<String>('hanja'),
     meaning: r.read<String>('meaning'),
+    pos: r.readNullable<String>('pos'),
+    fromStdict: r.read<int>('stdict') == 1,
   );
 
   static List<Variable> _vars(List<Object> args) => [

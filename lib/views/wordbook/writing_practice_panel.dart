@@ -8,6 +8,7 @@ import '../../data/models/hanja_word.dart';
 import '../../viewmodels/word_detail_viewmodel.dart';
 import '../../viewmodels/writing_practice_viewmodel.dart';
 import '../word_detail/word_detail_sheet.dart';
+import 'hanja_origin_sheet.dart';
 
 /// 화면 오른쪽에서 밀려 나오는 쓰기 연습 패널을 연다.
 Future<void> showWritingPractice(
@@ -80,6 +81,7 @@ class _WritingPracticePanelState extends ConsumerState<WritingPracticePanel> {
             builder: (context, _) {
               final c = _controller;
               final info = c.index < chars.length ? chars[c.index] : null;
+              final origin = ref.watch(hanjaOriginProvider(c.char)).value;
               return Padding(
                 padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
                 child: Column(
@@ -144,27 +146,52 @@ class _WritingPracticePanelState extends ConsumerState<WritingPracticePanel> {
                       ],
                     ),
                     const SizedBox(height: 12),
-                    Text.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(
-                            text: '${c.char}  ',
-                            style: AppText.hanja(context, 20),
-                          ),
-                          TextSpan(
-                            text: info == null ? '' : info.hunEum,
-                            style: AppText.ui(
-                              context,
-                              16,
-                              weight: FontWeight.w700,
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: '${c.char}  ',
+                                  style: AppText.hanja(context, 20),
+                                ),
+                                TextSpan(
+                                  text: info == null ? '' : info.hunEum,
+                                  style: AppText.ui(
+                                    context,
+                                    16,
+                                    weight: FontWeight.w700,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: '   ${c.index + 1} / ${c.charCount}',
+                                  style: AppText.ui(
+                                    context,
+                                    13,
+                                    color: p.muted,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          TextSpan(
-                            text: '   ${c.index + 1} / ${c.charCount}',
-                            style: AppText.ui(context, 13, color: p.muted),
+                        ),
+                        // 글자의 구성원리 (네이버 한자사전). 자료가 없는 글자는 누를 수 없다.
+                        OutlinedButton.icon(
+                          onPressed: origin == null
+                              ? null
+                              : () => showHanjaOriginSheet(
+                                  context,
+                                  origin: origin,
+                                  hunEum: info?.hunEum ?? '',
+                                ),
+                          icon: const Icon(
+                            Icons.account_tree_outlined,
+                            size: 18,
                           ),
-                        ],
-                      ),
+                          label: const Text('구성원리'),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 12),
                     Expanded(
