@@ -1,0 +1,45 @@
+name: Deploy web to GitHub Pages
+
+on:
+  push:
+    branches: [main] # main 에 올라가면 자동 배포
+  workflow_dispatch: # Actions 탭에서 직접 실행 버튼
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.4
+          cache: true
+      - run: flutter pub get
+      - run: flutter test
+      - run: >
+          flutter build web --release
+          --base-href /malsseum_hanja/
+          --dart-define=USE_FIREBASE=true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/web
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
