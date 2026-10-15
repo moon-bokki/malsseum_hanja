@@ -49,6 +49,18 @@ void main() {
     await tester.pumpAndSettle();
     expect(tester.widget<InkWell>(undo).onTap, isNotNull);
 
+    // '구성원리' 를 누르면 恩 의 자원 풀이 창이 나온다 (assets/data/hanja_origin.json).
+    await tester.tap(find.widgetWithText(OutlinedButton, '구성원리'));
+    await tester.pumpAndSettle();
+    expect(find.text('회의문자'), findsOneWidget);
+    expect(find.textContaining('因(인할 인)자와 心(마음 심)자'), findsOneWidget);
+    expect(find.textContaining('출처: 한자로드'), findsOneWidget);
+    expect(find.text('네이버 한자사전에서 그림 보기'), findsOneWidget);
+    expect(find.byType(Image), findsNothing); // 이미지는 앱에서 직접 불러오지 않는다
+    await tester.tapAt(const Offset(10, 10)); // 창 바깥을 눌러 닫는다
+    await tester.pumpAndSettle();
+    expect(find.text('회의문자'), findsNothing);
+
     // 다음 글자로 가면 惠 의 훈음이 나오고, 마치기를 누르면 닫힌다.
     await tester.tap(find.text('다음 글자'));
     await tester.pumpAndSettle();

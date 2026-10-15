@@ -5,6 +5,7 @@ import '../datasources/local/local_bible_datasource.dart';
 import '../models/bible_book.dart';
 import '../models/bible_query.dart';
 import '../models/hanja_char.dart';
+import '../models/hanja_origin.dart';
 import '../models/hanja_word.dart';
 import '../models/verse.dart';
 
@@ -31,6 +32,9 @@ abstract class BibleRepository {
   Future<Verse> getTodayVerse(DateTime date);
 
   Future<List<HanjaChar>> getHanjaChars(HanjaWord word);
+
+  /// 한자 한 글자의 구성원리. 없으면 null.
+  Future<HanjaOrigin?> getHanjaOrigin(String char);
 
   /// 검토를 마친 한자어 전체.
   Future<List<HanjaWord>> getAllWords();
@@ -119,6 +123,10 @@ class SqliteBibleRepository implements BibleRepository {
         chars[c] ?? HanjaChar(char: c, hun: '?', eum: '?'),
     ];
   }
+
+  @override
+  Future<HanjaOrigin?> getHanjaOrigin(String char) async =>
+      (await _local.loadHanjaOrigins())[char];
 
   @override
   Future<List<HanjaWord>> getAllWords() async {

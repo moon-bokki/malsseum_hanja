@@ -6,10 +6,12 @@
 //
 // 입력
 //   tool/data/hanja_words.json   한자어 사전. 여기 나오는 한자 낱자를 모두 받는다.
+//   tool/data/verses.json        손으로 검토한 구절별 한자어 (사전에 없는 글자도 함께 받는다)
 //
 // 출력
-//   tool/data/hanja_origin.json  글자별 구성원리 (다시 실행하면 이어서 받는다)
-//   tool/data/hanja_origin.tsv   검토용 요약 (스프레드시트로 열기)
+//   tool/data/hanja_origin.json    글자별 구성원리 전체 (다시 실행하면 이어서 받는다)
+//   tool/data/hanja_origin.tsv     검토용 요약 (스프레드시트로 열기)
+//   assets/data/hanja_origin.json  앱에 넣는 글자별 대표 구성원리 (한자로드가 있으면 한자로드)
 //
 // 출처: https://hanja.dict.naver.com (공개 API 가 아니라 사이트 내부 API 이므로 바뀔 수 있다)
 // 구성원리 본문·삽화는 출처별 저작물이다. 특히 『한자로드(路)』(신동윤, 삽화 변아롱·박혜현)는
@@ -18,10 +20,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:malsseum_hanja/data/hanja_linker.dart';
+import 'package:malsseum_hanja/data/models/verse.dart';
 
 const _dictionaryPath = 'tool/data/hanja_words.json';
 const _outPath = 'tool/data/hanja_origin.json';
 const _reportPath = 'tool/data/hanja_origin.tsv';
+const _annotatedPath = 'tool/data/verses.json';
+const _assetPath = 'assets/data/hanja_origin.json';
 
 const _acUrl = 'https://ac-dict.naver.com/ccko/ac';
 const _entryUrl = 'https://hanja.dict.naver.com/api/platform/ccko/entry';
@@ -50,9 +55,13 @@ Future<void> main(List<String> args) async {
       (jsonDecode(File(_dictionaryPath).readAsStringSync()) as List)
           .map((e) => HanjaDictEntry.fromJson(e as Map<String, dynamic>))
           .toList();
+  final annotated =
+      (jsonDecode(File(_annotatedPath).readAsStringSync()) as List)
+          .map((e) => Verse.fromJson(e as Map<String, dynamic>))
+          .expand((v) => v.words);
   final all = <String>{
-    for (final word in dictionary)
-      for (final rune in word.word.hanja.runes) String.fromCharCode(rune),
+    for (final word in [...dictionary.map((e) => e.word), ...annotated])
+      for (final rune in word.hanja.runes) String.fromCharCode(rune),
   };
 
   final targets = picked.isNotEmpty
@@ -88,10 +97,45 @@ Future<void> main(List<String> args) async {
   }
 
   _writeReport(saved, all);
+  _writeAsset(saved);
   stdout.writeln(
     '$_outPath 저장: ${saved.length}자${failed > 0 ? ' (실패 $failed자, 다시 실행하면 이어서 받는다)' : ''}',
   );
-  stdout.writeln('$_reportPath 저장');
+  stdout.writeln('$_reportPath, $_assetPath 저장');
+}
+
+/// 앱에 넣을 글자별 대표 구성원리: 한자로드가 있으면 한자로드, 없으면 첫 출처.
+/// {"渡": {"source", "type", "text", "entryId", "pictures"}}
+///
+/// 삽화·옛 글자 이미지는 넣지 않는다. 네이버 이미지 서버가 외부 사이트에서의 사용을
+/// 막고(Referer 검사) 저작물이기도 하므로, 앱은 entryId 로 네이버 한자사전 페이지를 연다.
+/// pictures 는 그 페이지에서 볼 수 있는 그림 이름 (삽화, 갑골문, 소전 …).
+void _writeAsset(Map<String, dynamic> saved) {
+  final asset = <String, dynamic>{};
+  for (final MapEntry(key: hanja, value: data) in saved.entries) {
+    final origins = ((data as Map)['origins'] as List)
+        .cast<Map<String, dynamic>>()
+        .where((o) => '${o['text'] ?? ''}'.isNotEmpty)
+        .toList();
+    if (origins.isEmpty) continue;
+    final o =
+        origins.where((o) => o['source'] == '한자로드').firstOrNull ??
+        origins.first;
+    asset[hanja] = {
+      'source': o['source'],
+      'type': o['type'],
+      'text': o['text'],
+      'entryId': data['entryId'],
+      'pictures': [
+        if ((o['images'] as List?)?.isNotEmpty ?? false) '삽화',
+        for (final g in (o['glyphs'] as List?) ?? const []) g['label'],
+      ],
+    };
+  }
+  final sorted = Map.fromEntries(
+    asset.entries.toList()..sort((a, b) => a.key.compareTo(b.key)),
+  );
+  File(_assetPath).writeAsStringSync('${jsonEncode(sorted)}\n');
 }
 
 /// 한 글자의 훈음과 구성원리 목록을 받는다.
