@@ -56,7 +56,14 @@ void main() {
     expect(find.textContaining('因(인할 인)자와 心(마음 심)자'), findsOneWidget);
     expect(find.textContaining('출처: 한자로드'), findsOneWidget);
     expect(find.text('네이버 한자사전에서 그림 보기'), findsOneWidget);
-    expect(find.byType(Image), findsNothing); // 이미지는 앱에서 직접 불러오지 않는다
+    // 구성원리 창에는 이미지를 직접 불러오지 않는다 (머리글 로고는 제외).
+    expect(
+      find.descendant(
+        of: find.byType(BottomSheet),
+        matching: find.byType(Image),
+      ),
+      findsNothing,
+    );
     await tester.tapAt(const Offset(10, 10)); // 창 바깥을 눌러 닫는다
     await tester.pumpAndSettle();
     expect(find.text('회의문자'), findsNothing);

@@ -22,8 +22,18 @@ void main() {
 
     expect(find.text('오늘의 말씀'), findsOneWidget);
     expect(find.byType(NavigationBar), findsOneWidget);
-    // 맨 위에는 로고 이미지(assets/images/logo02.png)가 보인다.
+    // 맨 위에는 로고 머리글(assets/images/logo02.png)이 모든 탭에서 고정되어 보인다.
     expect(find.bySemanticsLabel('말씀한자'), findsOneWidget);
+    for (final tab in ['성경', '단어장', '퀴즈', '마이']) {
+      await tester.tap(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text(tab),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.bySemanticsLabel('말씀한자'), findsOneWidget, reason: tab);
+    }
   });
 
   test('findWordMatches 는 본문 속 한자어 위치를 순서대로 찾는다', () {

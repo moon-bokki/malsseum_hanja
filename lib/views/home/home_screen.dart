@@ -33,7 +33,7 @@ class HomeScreen extends ConsumerWidget {
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
             children: [
               const _Header(),
-              const SizedBox(height: 20),
+              const SizedBox(height: 12),
               _TodayVerse(verse: verse),
               const SizedBox(height: 20),
               _TodayWords(verse: verse),
@@ -54,58 +54,16 @@ class HomeScreen extends ConsumerWidget {
   }
 }
 
-class _Header extends ConsumerWidget {
+/// 오늘 날짜 (로고와 알림 버튼은 모든 탭 위의 AppHeader 에 있다).
+class _Header extends StatelessWidget {
   const _Header();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final p = context.palette;
+  Widget build(BuildContext context) {
     final now = DateTime.now();
-    // 로고(심볼 + 워드마크 + 슬로건)는 글자색이 검정이라, 다크 테마에서는 밝은 바탕에 얹는다.
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    final logo = Image.asset(
-      'assets/images/logo02.png',
-      height: 44,
-      semanticLabel: '말씀한자',
-    );
-    return Row(
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              dark
-                  ? DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF6F5FA),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: logo,
-                      ),
-                    )
-                  : logo,
-              const SizedBox(height: 4),
-              Text(
-                '${now.month}월 ${now.day}일 ${_weekdays[now.weekday - 1]}요일',
-                style: AppText.ui(context, 12, color: p.muted),
-              ),
-            ],
-          ),
-        ),
-        IconButton.outlined(
-          tooltip: '알림 설정',
-          style: IconButton.styleFrom(
-            backgroundColor: p.surface,
-            side: BorderSide(color: p.border),
-            minimumSize: const Size(44, 44),
-          ),
-          icon: const Icon(Icons.notifications_none, size: 20),
-          onPressed: () =>
-              ref.read(selectedTabProvider.notifier).select(AppTab.my),
-        ),
-      ],
+    return Text(
+      '${now.month}월 ${now.day}일 ${_weekdays[now.weekday - 1]}요일',
+      style: AppText.ui(context, 13, color: context.palette.muted),
     );
   }
 }
