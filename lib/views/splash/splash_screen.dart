@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -125,4 +126,50 @@ class SplashScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+/// 스플래시 화면을 [duration] 동안 보여 주었다가 닫는다 (머리글 로고를 누를 때).
+Future<void> replaySplash(
+  BuildContext context, {
+  Duration duration = const Duration(seconds: 3),
+}) {
+  return Navigator.of(context).push(
+    PageRouteBuilder<void>(
+      transitionDuration: const Duration(milliseconds: 300),
+      reverseTransitionDuration: const Duration(milliseconds: 350),
+      pageBuilder: (_, _, _) => _TimedSplash(duration: duration),
+      transitionsBuilder: (_, animation, _, child) =>
+          FadeTransition(opacity: animation, child: child),
+    ),
+  );
+}
+
+class _TimedSplash extends StatefulWidget {
+  const _TimedSplash({required this.duration});
+
+  final Duration duration;
+
+  @override
+  State<_TimedSplash> createState() => _TimedSplashState();
+}
+
+class _TimedSplashState extends State<_TimedSplash> {
+  late final Timer _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer(widget.duration, () {
+      if (mounted) Navigator.of(context).pop();
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => const SplashScreen();
 }
